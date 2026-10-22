@@ -1,5 +1,6 @@
 pub mod error;
 pub mod enums;
+pub mod state;
 
 use std::time::Duration;
 
@@ -16,13 +17,24 @@ use crate::config::error::ConfigError;
 // ---------------------------------------------------------------------------
 
 /// Root configuration struct. Maps directly to the TOML config file.
-#[derive(Debug, Clone, Default, serde::Deserialize, serde::Serialize)]
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 #[serde(default)]
 pub struct Config {
     pub issuer: String,
     pub feature_flags: FeatureFlags,
     pub token_lifetimes: TokenLifetimes,
     pub jwks: JwksConfig,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            issuer: "http://localhost:3000".to_string(),
+            feature_flags: FeatureFlags::default(),
+            token_lifetimes: TokenLifetimes::default(),
+            jwks: JwksConfig::default(),
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -172,7 +184,9 @@ impl DiscoveryDocument {
         // Helper: join a path segment to the base URL
         let join = |path: &str| -> String {
             let mut url = base.clone();
-            url.set_path(&format!("{}{}", base.path(), path));
+            let base_path = base.path().trim_end_matches('/');
+            let path = path.trim_start_matches('/');
+            url.set_path(&format!("{}/{}", base_path, path));
             url.to_string()
         };
 
