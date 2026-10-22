@@ -25,12 +25,15 @@ pub enum ConfigError {
 /// Errors that can occur during secret operations.
 #[derive(Debug, Error)]
 pub enum SecretError {
-    #[error("secret not found")]
-    NotFound,
+    #[error("key not found: {0}")]
+    KeyNotFound(String),
 
     #[error("failed to load secret: {0}")]
     Load(#[from] std::io::Error),
 
     #[error("invalid secret format: {0}")]
     InvalidFormat(String),
+
+    #[error("secret operation not supported: {0}")]
+    NotSupported(String),
 }
