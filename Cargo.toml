@@ -6,3 +6,12 @@ edition = "2024"
 [dependencies]
 axum = "0.8"
 tokio = { version = "1", features = ["full"] }
+
+# Config layer
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+url = "2"
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+thiserror = "2"
+async-trait = "0.1"
